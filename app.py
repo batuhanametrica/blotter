@@ -7,7 +7,20 @@ from mevduat import get_guncel_kur, veri_giris_formu, mevduat_listesi_tab, hesap
 from constants import TL_KOLONLAR, USD_KOLONLAR, PORTFOY_KOLONLAR
 
 # Türkçe tarih formatı
-locale.setlocale(locale.LC_ALL, 'turkish')
+try:
+    locale.setlocale(locale.LC_ALL, 'turkish')
+except:
+    try:
+        locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
+    except:
+        try:
+            locale.setlocale(locale.LC_ALL, 'tr_TR')
+        except:
+            # Eğer Türkçe locale bulunamazsa varsayılan locale'i kullan
+            locale.setlocale(locale.LC_ALL, '')
+
+# Para birimi sembolü için sabit tanımlama
+CURRENCY_SYMBOL = "\u20BA"  # ₺ sembolü için Unicode karşılığı
 
 st.set_page_config(
     page_title="Portföy Takip",
@@ -44,9 +57,9 @@ def goster_metrikler(df, prefix=""):
     with col1:
         st.metric(f"{prefix}Mevduat", f"{len(df)} Adet")
     with col2:
-        st.metric(f"{prefix}Anapara (TL)", f"{toplam_anapara_tl:,.0f} ₺")
+        st.metric(f"{prefix}Anapara (TL)", f"{toplam_anapara_tl:,.0f} {CURRENCY_SYMBOL}")
     with col3:
-        st.metric(f"{prefix}Net Faiz (TL)", f"{toplam_net_faiz_tl:,.0f} ₺")
+        st.metric(f"{prefix}Net Faiz (TL)", f"{toplam_net_faiz_tl:,.0f} {CURRENCY_SYMBOL}")
     with col4:
         if prefix:
             ort_vade = hesapla_ortalama_vade(df)
